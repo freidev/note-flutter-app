@@ -43,12 +43,18 @@ class Note {
   }
 
   factory Note.fromMap(Map<String, dynamic> map) {
+    if (map['createdAt'] is String) {
+      map['createdAt'] = DateTime.tryParse(map['createdAt'])!;
+    }
+    if (map['updatedAt'] is String) {
+      map['updatedAt'] = DateTime.tryParse(map['updatedAt'])!;
+    }
     return Note(
       id: map['id'] ?? '',
       title: map['title'] ?? '',
       content: map['content'] ?? '',
-      createdAt: DateTime.tryParse(map['createdAt']) ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(map['updatedAt']) ?? DateTime.now(),
+      createdAt: map['createdAt'] ?? DateTime.now(),
+      updatedAt: map['updatedAt'] ?? DateTime.now(),
     );
   }
 

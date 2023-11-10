@@ -14,6 +14,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   final ScrollController _scrollController = ScrollController();
   late List<DateTime> daysOfMonth;
   late int initialScrollIndex;
+  int selectedDate = DateTime.now().day;
   @override
   void initState() {
     super.initState();
@@ -36,7 +37,7 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
     // DateTime firstDayOfMonth = DateTime(now.year, now.month, 1);
     // print(firstDayOfMonth);
     // DateTime lastDayOfMonth = DateTime(now.year, now.month + 1, 0);
@@ -53,44 +54,51 @@ class _HorizontalCalendarState extends State<HorizontalCalendar> {
         itemCount: daysOfMonth.length,
         itemBuilder: (context, index) {
           DateTime day = daysOfMonth[index];
-          bool isSelected = day.day == now.day;
+          bool isSelected = day.day == selectedDate;
 
-          return Container(
-            width: 60.0,
-            margin: const EdgeInsets.all(4),
-            padding: const EdgeInsets.symmetric(
-              vertical: 12,
-            ),
-            decoration: BoxDecoration(
-              border: Border.all(color: grey400, width: 1),
-              color: isSelected ? Colors.black : Colors.transparent,
-              borderRadius: BorderRadius.circular(20.0),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text(
-                  DateFormat('E').format(day), // Day name
-                  style: theme.textTheme.titleMedium!.copyWith(
-                    color: isSelected ? Colors.white : Colors.black,
+          return GestureDetector(
+            onTap: () {
+              setState(() {
+                selectedDate = day.day;
+              });
+            },
+            child: Container(
+              width: 60.0,
+              margin: const EdgeInsets.all(4),
+              padding: const EdgeInsets.symmetric(
+                vertical: 12,
+              ),
+              decoration: BoxDecoration(
+                border: Border.all(color: grey400, width: 1),
+                color: isSelected ? Colors.black : Colors.transparent,
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    DateFormat('E').format(day), // Day name
+                    style: theme.textTheme.bodyMedium!.copyWith(
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
                   ),
-                ),
-                const Gap(5.0),
-                Text(
-                  day.day.toString(), // Day number
-                  style: theme.textTheme.titleLarge!.copyWith(
-                    color: isSelected ? Colors.white : Colors.black,
-                    fontWeight: FontWeight.bold,
+                  const Gap(5.0),
+                  Text(
+                    day.day.toString(), // Day number
+                    style: theme.textTheme.titleLarge!.copyWith(
+                      color: isSelected ? Colors.white : Colors.black,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const Gap(5.0),
-                Text(
-                  DateFormat('MMM').format(day), // Month name
-                  style: theme.textTheme.titleMedium!.copyWith(
-                    color: isSelected ? Colors.white : Colors.black,
+                  const Gap(5.0),
+                  Text(
+                    DateFormat('MMM').format(day), // Month name
+                    style: theme.textTheme.bodyMedium!.copyWith(
+                      color: isSelected ? Colors.white : Colors.black,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           );
         },

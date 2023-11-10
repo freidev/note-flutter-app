@@ -1,49 +1,29 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:note/models/note.dart';
-import 'package:note/services/notes.dart';
+import 'package:note/providers/note_provider.dart';
+import 'package:note/screens/note_editor.dart';
 import 'package:note/utils/contants.dart';
 import 'package:note/utils/styles.dart';
 import 'package:note/widgets/calendar/horizontal_calendar.dart';
 import 'package:note/widgets/layout/gap.dart';
 
-class Home extends StatefulWidget {
-  const Home({Key? key}) : super(key: key);
-
+class Home extends ConsumerStatefulWidget {
   @override
-  State<Home> createState() => _HomeState();
+  _HomeState createState() => _HomeState();
+  const Home({super.key});
 }
 
-class _HomeState extends State<Home> {
-  List<Note> notes = [];
-  Future<void> getNotes() async {
-    try {
-      notes = await NoteServices.getNotes();
-      setState(() {});
-    } catch (e) {
-      print('e $e');
-    }
-  }
-
-  @override
-  void initState() {
-    getNotes();
-    super.initState();
-  }
-
+class _HomeState extends ConsumerState<Home> {
+  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
-    print('hello workd');
     final theme = Theme.of(context);
-    const gridDelegate = SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      mainAxisSpacing: padding,
-      crossAxisSpacing: padding,
-      mainAxisExtent: 250.0,
-    );
+    final List<Note> notes = ref.watch(notesProvider);
     return Scaffold(
       body: SafeArea(
         minimum: const EdgeInsets.symmetric(
@@ -59,6 +39,9 @@ class _HomeState extends State<Home> {
                     child: TextFormField(
                       decoration: InputDecoration(
                         hintText: 'Search for notes',
+                        hintStyle: theme.textTheme.bodyMedium!.copyWith(
+                          color: grey600,
+                        ),
                         prefixIcon: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: SvgPicture.asset('assets/svgs/search.svg'),
@@ -76,11 +59,23 @@ class _HomeState extends State<Home> {
                 height: 100.0,
                 child: ListView.separated(
                   separatorBuilder: (context, index) => const Gap(12, h: true),
-                  itemCount: 10,
+                  itemCount: notes.length,
                   scrollDirection: Axis.horizontal,
                   itemBuilder: (context, index) => ChoiceChip(
-                    label: const Text('Today'),
-                    selected: index == 0,
+                    onSelected: (value) {
+                      setState(() {
+                        selectedIndex = index;
+                      });
+                    },
+                    label: Text(
+                      notes[index].title,
+                      style: theme.textTheme.titleSmall!.copyWith(
+                        color: index == selectedIndex ? ligth : null,
+                        fontWeight:
+                            index == selectedIndex ? FontWeight.w600 : null,
+                      ),
+                    ),
+                    selected: index == selectedIndex,
                   ),
                 ),
               ),
@@ -90,68 +85,39 @@ class _HomeState extends State<Home> {
                   notes.length,
                   (index) {
                     final note = notes[index];
-                    return CardNote(title: note.title, items: note.content);
+                    return GestureDetector(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => NoteEditor(
+                            note: note,
+                            onSaved: (note) {
+                              ref.read(notesProvider.notifier).save(
+                                    title: note.title,
+                                    content: note.content,
+                                  );
+                            },
+                          ),
+                        ),
+                      ),
+                      child: CardNote(title: note.title, items: note.content),
+                    );
                   },
                 ),
               )
-              // ...List.generate(
-              //   notes.length,
-              //   (index) {
-              //     return const Row(
-              //       children: [
-              //         Expanded(
-              //           child: CardNote(
-              //             title: 'Product Meeting',
-              //             items: 'Hug x Hug vious.',
-              //           ),
-              //         ),
-              //         Expanded(
-              //           child: CardNote(
-              //             title: 'To-do list',
-              //             items:
-              //                 'Prepare presentation slides for the marketing meeting',
-              //           ),
-              //         ),
-              //       ],
-              //     );
-              //   },
-              // )
-              // Expanded(
-              //   child: GridView.builder(
-              //     gridDelegate: gridDelegate,
-              //     itemBuilder: (context, index) {
-              //       final note = notes[index];
-              //       return CardNote(
-              //         title: note.title,
-              //         items: note.content,
-              //       );
-              //       // return Container(
-              //       //   padding: const EdgeInsets.all(padding),
-              //       //   decoration: BoxDecoration(
-              //       //     color: Colors.blue.shade200,
-              //       //     borderRadius: BorderRadius.circular(20.0),
-              //       //   ),
-              //       //   child: Column(
-              //       //     crossAxisAlignment: CrossAxisAlignment.start,
-              //       //     children: [
-              //       //       Text(
-              //       //         note.title,
-              //       //         style: theme.textTheme.titleMedium,
-              //       //       ),
-              //       //       Text(note.content),
-              //       //     ],
-              //       //   ),
-              //       // );
-              //     },
-              //     itemCount: notes.length,
-              //   ),
-              // ),
             ],
           ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () => Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => NoteEditor(
+              onSaved: (note) {},
+            ),
+          ),
+        ),
         backgroundColor: Colors.black,
         elevation: 0,
         shape: const CircleBorder(),

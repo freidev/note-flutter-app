@@ -22,6 +22,7 @@ List<Color> get colors {
 const inputDecoration = InputDecorationTheme(
   filled: true,
   fillColor: grey300,
+  contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 10.0),
   enabledBorder: OutlineInputBorder(
     borderRadius: BorderRadius.all(Radius.circular(16)),
     borderSide: BorderSide.none,
@@ -30,21 +31,21 @@ const inputDecoration = InputDecorationTheme(
     borderRadius: BorderRadius.all(Radius.circular(padding)),
     borderSide: BorderSide(color: Colors.red, width: 1),
   ),
+  focusedBorder: OutlineInputBorder(
+    borderRadius: BorderRadius.all(Radius.circular(padding)),
+    borderSide: BorderSide(color: Colors.black, width: 1),
+  ),
 );
 
 final chipTheme = ChipThemeData(
-  backgroundColor: Colors.blue,
-  disabledColor: Colors.transparent,
-  selectedColor: Colors.green,
+  backgroundColor: Colors.transparent,
   secondarySelectedColor: Colors.black,
-  checkmarkColor: Colors.purple,
-  surfaceTintColor: Colors.yellow,
+  selectedColor: Colors.black,
   showCheckmark: false,
+  side: const BorderSide(color: grey400, width: 1),
   shape: RoundedRectangleBorder(
     borderRadius: BorderRadius.circular(12.0),
   ),
-  labelStyle: ThemeData.light().textTheme.titleLarge,
-  secondaryLabelStyle: ThemeData.light().textTheme.titleLarge,
   padding: const EdgeInsets.all(12.0),
 );
 
