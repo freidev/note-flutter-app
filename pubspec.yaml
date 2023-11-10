@@ -1,0 +1,35 @@
+name: note
+description: A new Flutter project.
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
+version: 1.0.0+1
+
+environment:
+  sdk: ">=3.1.4 <4.0.0"
+dependencies:
+  cupertino_icons: ^1.0.2
+  flutter:
+    sdk: flutter
+  flutter_staggered_grid_view: ^0.7.0
+  flutter_svg: ^2.0.9
+  http: ^1.1.0
+  intl: ^0.18.1
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/svgs/
+  fonts:
+    - family: ProductSans
+      fonts:
+        - asset: assets/fonts/ProductSans/ProductSans-Light.ttf
+          weight: 300
+        - asset: assets/fonts/ProductSans/ProductSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/ProductSans/ProductSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/ProductSans/ProductSans-Bold.ttf
+          weight: 600
